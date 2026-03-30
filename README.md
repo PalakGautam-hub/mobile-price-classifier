@@ -1,72 +1,72 @@
-# Mobile Price Classifier 📱💻
+# Mobile Price Range Classifier Using Machine Learning and Flask
 
-A Machine Learning web application built with Flask that predicts the price range of mobile phones based on their hardware specifications. 
-
-## Overview
-This project uses a Random Forest Classifier trained on a mobile phone dataset to predict whether a mobile phone falls into one of four price categories:
-- **Low Price** (0)
-- **Medium Price** (1)
-- **High Price** (2)
-- **Very High Price** (3)
-
-The frontend allows users to input various specifications (like RAM, Battery Power, Camera Megapixels, etc.) to get a real-time price range prediction.
+An AI-powered web application that classifies mobile phones into price ranges (Low, Medium, High, Very High) based on hardware specifications using a Random Forest Classifier.
 
 ## Features
-- Scaled Input Features via Scikit-Learn
-- Real-time Price Prediction Interface
-- Lightweight Flask API
-- High Accuracy Random Forest Model
+
+- Predicts mobile price range from 11 hardware features
+- Real-time client-side and server-side input validation with range hints
+- Color-coded results with descriptive explanations
+- Modern glassmorphism UI with animated background
+- Responsive design for all screen sizes
+
+## Tech Stack
+
+- **Backend:** Python, Flask
+- **ML:** scikit-learn (Random Forest Classifier), pandas, NumPy
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Dataset:** [Mobile Price Classification Dataset (Kaggle)](https://www.kaggle.com/datasets/iabhishekofficial/mobile-price-classification)
+
+## Input Parameters
+
+| Feature | Description | Valid Range |
+|---------|-------------|-------------|
+| Battery Power | Battery capacity in mAh | 500 - 2000 |
+| RAM | RAM in MB | 256 - 4000 |
+| Internal Memory | Storage in GB | 2 - 64 |
+| Clock Speed | Processor speed in GHz | 0.5 - 3.0 |
+| Weight | Device weight in grams | 80 - 200 |
+| Primary Camera | Rear camera in MP | 0 - 20 |
+| Front Camera | Front camera in MP | 0 - 19 |
+| Pixel Height | Screen resolution height | 0 - 1960 |
+| Pixel Width | Screen resolution width | 500 - 1998 |
+| Screen Height | Screen height in cm | 5 - 19 |
+| Screen Width | Screen width in cm | 0 - 18 |
+
+## Setup & Run
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Train the model (generates model.pkl and scaler.pkl)
+python train_model.py
+
+# Run the web application
+python main.py
+```
+
+Open **http://127.0.0.1:5000** in your browser.
 
 ## Project Structure
 
 ```
 mobile-price-classifier/
-├── dataset/                # Contains training data (train.csv)
-├── static/                 # CSS/JS and static assets
-├── templates/              # HTML frontend templates (index.html)
-├── main.py                 # Flask server and API endpoints
-├── train_model.py          # Script to train and export ML models
-├── requirements.txt        # Python package dependencies
-├── model.pkl               # Saved Random Forest model
-└── scaler.pkl              # Saved Scikit-Learn StandardScaler
+├── main.py              # Flask server with prediction API
+├── train_model.py       # Model training script
+├── model.pkl            # Trained Random Forest model
+├── scaler.pkl           # Fitted StandardScaler
+├── requirements.txt     # Python dependencies
+├── report.md            # Project report
+├── dataset/
+│   └── train.csv        # Training dataset (2000 samples)
+├── templates/
+│   └── index.html       # Web interface
+└── static/
+    ├── style.css        # Glassmorphism styling
+    └── script.js        # Frontend validation & API calls
 ```
 
-## Getting Started
+## Team
 
-### Prerequisites
-Make sure you have Python 3.8+ installed on your system.
-
-### Installation
-1. Open your terminal and navigate to the project directory:
-   ```bash
-   cd mobile-price-classifier
-   ```
-
-2. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Training the Model (Optional)
-If you want to re-train the model, update the dataset in `dataset/train.csv` and run:
-```bash
-python train_model.py
-```
-This script processes the data, trains a Random Forest Classifier, and saves `model.pkl` and `scaler.pkl` to the root directory.
-
-### Running the Application
-Start the Flask development server:
-```bash
-python main.py
-```
-The application will be accessible at: `http://127.0.0.1:5000/`
-
-## Usage
-1. Open the web interface at `http://localhost:5000/`.
-2. Enter the mobile hardware specifications via the provided form.
-3. Submit the form to view the predicted price category dynamically.
-
-## Technologies Used
-- **Backend:** Python, Flask
-- **Machine Learning:** Scikit-Learn, Pandas, NumPy, Joblib
-- **Frontend:** HTML, CSS, JavaScript (via Jinja2 Templates)
+Developed as part of **Application Development Laboratory (CS33002)**, Spring 2026, KIIT University.
