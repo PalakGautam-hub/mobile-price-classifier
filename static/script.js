@@ -1,32 +1,53 @@
-async function predict(){
+document.getElementById('prediction-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Animate button
+    const btn = document.getElementById('predict-btn');
+    const originalText = btn.innerText;
+    btn.innerText = 'Analyzing...';
+    btn.style.opacity = '0.7';
 
-let data = {
+    // Collect data
+    const features = [
+        "battery_power", "ram", "px_height", "px_width", "mobile_wt",
+        "int_memory", "pc", "fc", "clock_speed", "sc_h", "sc_w"
+    ];
 
-battery_power: document.getElementById("battery_power").value,
-ram: document.getElementById("ram").value,
-px_height: document.getElementById("px_height").value,
-px_width: document.getElementById("px_width").value,
-mobile_wt: document.getElementById("mobile_wt").value,
-int_memory: document.getElementById("int_memory").value,
-pc: document.getElementById("pc").value,
-fc: document.getElementById("fc").value,
-clock_speed: document.getElementById("clock_speed").value,
-sc_h: document.getElementById("sc_h").value,
-sc_w: document.getElementById("sc_w").value
+    const data = {};
+    features.forEach(f => {
+        data[f] = document.getElementById(f).value;
+    });
 
-}
+    try {
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
 
-let response = await fetch("/predict",{
+        if (!response.ok) {
+            throw new Error('Network error');
+        }
 
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
+        const result = await response.json();
 
-})
+        // Update UI
+        const container = document.getElementById('result-container');
+        const tag = document.getElementById('result-tag');
+        
+        tag.innerText = result.prediction;
+        container.classList.remove('hidden');
 
-let result = await response.json()
+        // Scroll to result smoothly
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-document.getElementById("result").innerText =
-"Predicted Price Range: " + result.prediction
-
-}
+    } catch (error) {
+        alert("An error occurred. Make sure the server is running.");
+        console.error(error);
+    } finally {
+        btn.innerText = originalText;
+        btn.style.opacity = '1';
+    }
+});

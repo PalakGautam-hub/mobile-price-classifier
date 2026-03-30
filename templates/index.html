@@ -1,35 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Mobile Price Predictor</title>
-<link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered tool to predict mobile phone price ranges based on hardware specifications like RAM, battery power, and camera quality.">
+    <title>Mobile Price Range Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
-<h1>Mobile Price Range Predictor</h1>
+    <div class="container fade-in">
+        <header>
+            <h1>Mobile Price Predictor</h1>
+            <p>Enter your device specifications to get an AI-powered price estimate.</p>
+        </header>
 
-<div class="container">
+        <form id="prediction-form" class="glass-form">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="battery_power">Battery Power (mAh)</label>
+                    <input type="number" id="battery_power" placeholder="e.g. 4000" required>
+                </div>
+                <div class="input-group">
+                    <label for="ram">RAM (MB)</label>
+                    <input type="number" id="ram" placeholder="e.g. 4096" required>
+                </div>
+                <div class="input-group">
+                    <label for="int_memory">Internal Memory (GB)</label>
+                    <input type="number" id="int_memory" placeholder="e.g. 64" required>
+                </div>
+                <div class="input-group">
+                    <label for="clock_speed">Clock Speed (GHz)</label>
+                    <input type="number" step="0.1" id="clock_speed" placeholder="e.g. 2.5" required>
+                </div>
+                <div class="input-group">
+                    <label for="mobile_wt">Weight (grams)</label>
+                    <input type="number" id="mobile_wt" placeholder="e.g. 180" required>
+                </div>
+                <div class="input-group">
+                    <label for="pc">Primary Camera (MP)</label>
+                    <input type="number" id="pc" placeholder="e.g. 12" required>
+                </div>
+                <div class="input-group">
+                    <label for="fc">Front Camera (MP)</label>
+                    <input type="number" id="fc" placeholder="e.g. 8" required>
+                </div>
+                <div class="input-group">
+                    <label for="px_height">Pixel Height</label>
+                    <input type="number" id="px_height" placeholder="e.g. 1920" required>
+                </div>
+                <div class="input-group">
+                    <label for="px_width">Pixel Width</label>
+                    <input type="number" id="px_width" placeholder="e.g. 1080" required>
+                </div>
+                <div class="input-group">
+                    <label for="sc_h">Screen Height (cm)</label>
+                    <input type="number" id="sc_h" placeholder="e.g. 15" required>
+                </div>
+                <div class="input-group">
+                    <label for="sc_w">Screen Width (cm)</label>
+                    <input type="number" id="sc_w" placeholder="e.g. 7" required>
+                </div>
+            </div>
 
-<input id="battery_power" placeholder="Battery Power">
-<input id="ram" placeholder="RAM">
-<input id="px_height" placeholder="Pixel Height">
-<input id="px_width" placeholder="Pixel Width">
-<input id="mobile_wt" placeholder="Mobile Weight">
-<input id="int_memory" placeholder="Internal Memory">
-<input id="pc" placeholder="Primary Camera">
-<input id="fc" placeholder="Front Camera">
-<input id="clock_speed" placeholder="Clock Speed">
-<input id="sc_h" placeholder="Screen Height">
-<input id="sc_w" placeholder="Screen Width">
+            <button type="submit" id="predict-btn">Predict Price Range</button>
+        </form>
 
-<button onclick="predict()">Predict Price</button>
+        <div id="result-container" class="hidden">
+            <h2>Estimated Price Range</h2>
+            <div id="result-tag" class="result-tag"></div>
+        </div>
+    </div>
 
-<h2 id="result"></h2>
-
-</div>
-
-<script src="/static/script.js"></script>
-
+    <script src="/static/script.js"></script>
 </body>
 </html>

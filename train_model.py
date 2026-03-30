@@ -7,11 +7,17 @@ import joblib
 # Load dataset
 data = pd.read_csv("dataset/train.csv")
 
+# Features to match the prediction API
+features = [
+    "battery_power", "ram", "px_height", "px_width", "mobile_wt",
+    "int_memory", "pc", "fc", "clock_speed", "sc_h", "sc_w"
+]
+
 # Target
 y = data["price_range"]
 
 # Features
-X = data.drop("price_range", axis=1)
+X = data[features]
 
 # Split
 X_train, X_test, y_train, y_test = train_test_split(
@@ -23,7 +29,7 @@ scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 
 # Train
-model = RandomForestClassifier()
+model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
 
 # Save
