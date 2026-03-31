@@ -7,89 +7,91 @@ app = Flask(__name__)
 model = joblib.load("model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-FEATURE_ORDER = [
-    "battery_power",
-    "ram",
-    "px_height",
-    "px_width",
-    "mobile_wt",
-    "int_memory",
-    "pc",
-    "fc",
-    "clock_speed",
-    "sc_h",
-    "sc_w",
-]
-
-# Broad realistic bounds to reject clearly invalid input.
-FEATURE_BOUNDS = {
-    "battery_power": (100, 10000),
-    "ram": (128, 20000),
-    "px_height": (0, 5000),
-    "px_width": (100, 8000),
-    "mobile_wt": (50, 500),
-    "int_memory": (1, 2000),
-    "pc": (0, 200),
-    "fc": (0, 200),
-    "clock_speed": (0.1, 10.0),
-    "sc_h": (1, 50),
-    "sc_w": (0, 50),
+# Validation rules matching the training dataset ranges
+VALIDATION_RULES = {
+    "battery_power": {"min": 500,  "max": 2000, "label": "Battery Power"},
+    "ram":           {"min": 256,  "max": 4000, "label": "RAM"},
+    "int_memory":    {"min": 2,    "max": 64,   "label": "Internal Memory"},
+    "clock_speed":   {"min": 0.5,  "max": 3.0,  "label": "Clock Speed"},
+    "mobile_wt":     {"min": 80,   "max": 200,  "label": "Weight"},
+    "pc":            {"min": 0,    "max": 20,   "label": "Primary Camera"},
+    "fc":            {"min": 0,    "max": 19,   "label": "Front Camera"},
+    "px_height":     {"min": 0,    "max": 1960, "label": "Pixel Height"},
+    "px_width":      {"min": 500,  "max": 1998, "label": "Pixel Width"},
+    "sc_h":          {"min": 5,    "max": 19,   "label": "Screen Height"},
+    "sc_w":          {"min": 0,    "max": 18,   "label": "Screen Width"},
 }
 
+FEATURE_ORDER = [
+    "battery_power", "ram", "px_height", "px_width", "mobile_wt",
+    "int_memory", "pc", "fc", "clock_speed", "sc_h", "sc_w"
+]
 
-def parse_and_validate_features(data):
-    if not isinstance(data, dict):
-        return None, "Request body must be valid JSON."
+LABELS = {
+    0: "Low Price",
+    1: "Medium Price",
+    2: "High Price",
+    3: "Very High Price"
+}
 
-    features = []
-    for field in FEATURE_ORDER:
-        if field not in data:
-            return None, f"Missing required field: {field}"
+CSS_CLASSES = {
+    0: "price-low",
+    1: "price-medium",
+    2: "price-high",
+    3: "price-very-high"
+}
 
-        raw_value = data[field]
-        if raw_value is None or str(raw_value).strip() == "":
-            return None, f"Field '{field}' cannot be empty."
-
-        try:
-            value = float(raw_value)
-        except (TypeError, ValueError):
-            return None, f"Field '{field}' must be a number."
-
-        if not np.isfinite(value):
-            return None, f"Field '{field}' must be a finite number."
-
-        min_val, max_val = FEATURE_BOUNDS[field]
-        if value < min_val or value > max_val:
-            return None, f"Field '{field}' must be between {min_val} and {max_val}."
-
-        features.append(value)
-
-    return np.array(features, dtype=float).reshape(1, -1), None
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
+
 @app.route("/predict", methods=["POST"])
 def predict():
-
     data = request.json
-    features, error = parse_and_validate_features(data)
-    if error:
-        return jsonify({"error": error}), 400
+    if not data:
+        return jsonify({"error": "No input data provided."}), 400
 
+    # Validate all fields
+    errors = []
+    values = {}
+    for field in FEATURE_ORDER:
+        rule = VALIDATION_RULES[field]
+        raw = data.get(field)
+
+        if raw is None or raw == "":
+            errors.append({"field": field, "message": f"{rule['label']} is required."})
+            continue
+
+        try:
+            val = float(raw)
+        except (ValueError, TypeError):
+            errors.append({"field": field, "message": f"{rule['label']} must be a valid number."})
+            continue
+
+        if val < rule["min"] or val > rule["max"]:
+            errors.append({
+                "field": field,
+                "message": f"{rule['label']} must be between {rule['min']} and {rule['max']}."
+            })
+            continue
+
+        values[field] = val
+
+    if errors:
+        return jsonify({"errors": errors}), 422
+
+    features = np.array([values[f] for f in FEATURE_ORDER]).reshape(1, -1)
     features = scaler.transform(features)
 
-    prediction = model.predict(features)[0]
+    prediction = int(model.predict(features)[0])
 
-    labels = {
-        0:"Low Price",
-        1:"Medium Price",
-        2:"High Price",
-        3:"Very High Price"
-    }
+    return jsonify({
+        "prediction": LABELS[prediction],
+        "css_class": CSS_CLASSES[prediction]
+    })
 
-    return jsonify({"prediction":labels[int(prediction)]})
 
 if __name__ == "__main__":
     app.run(debug=True)

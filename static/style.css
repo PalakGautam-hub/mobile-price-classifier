@@ -1,30 +1,278 @@
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-text-align:center;
+:root {
+    --bg-color: #0d1117;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --accent: #00f2fe;
+    --accent-glow: rgba(0, 242, 254, 0.4);
+    --text-main: #f0f6fc;
+    --text-muted: #8b949e;
+    --error: #f85149;
+    --success-low: #3fb950;
+    --success-medium: #d29922;
+    --success-high: #f0883e;
+    --success-very-high: #f85149;
 }
 
-.container{
-width:300px;
-margin:auto;
-display:flex;
-flex-direction:column;
-gap:10px;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-input{
-padding:10px;
-border-radius:6px;
-border:none;
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow-x: hidden;
+    position: relative;
 }
 
-button{
-padding:10px;
-background:#22c55e;
-border:none;
-color:white;
-font-size:16px;
-border-radius:6px;
-cursor:pointer;
+/* Background Animated Blobs */
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: 0;
+    opacity: 0.5;
+    animation: drift 10s infinite alternate ease-in-out;
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: #4facfe;
+    animation-delay: -2s;
+}
+
+.blob-2 {
+    bottom: -10%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: #00f2fe;
+}
+
+@keyframes drift {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(50px) scale(1.1); }
+}
+
+.container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 3rem;
+    width: 100%;
+    max-width: 800px;
+    z-index: 1;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color 0.3s;
+}
+
+input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    color: var(--text-main);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+input:focus + label, .input-group:focus-within label {
+    color: var(--accent);
+}
+
+/* Validation styles */
+.input-error {
+    border-color: var(--error) !important;
+    box-shadow: 0 0 10px rgba(248, 81, 73, 0.3) !important;
+}
+
+.hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+.error-msg {
+    font-size: 0.78rem;
+    color: var(--error);
+    min-height: 1rem;
+    font-weight: 500;
+}
+
+button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+#result-container {
+    margin-top: 2rem;
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--glass-border);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.result-tag {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.8rem 2rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* Price range color coding */
+.result-tag.price-low {
+    color: var(--success-low);
+    border-color: var(--success-low);
+    box-shadow: 0 0 20px rgba(63, 185, 80, 0.4);
+}
+
+.result-tag.price-medium {
+    color: var(--success-medium);
+    border-color: var(--success-medium);
+    box-shadow: 0 0 20px rgba(210, 153, 34, 0.4);
+}
+
+.result-tag.price-high {
+    color: var(--success-high);
+    border-color: var(--success-high);
+    box-shadow: 0 0 20px rgba(240, 136, 62, 0.4);
+}
+
+.result-tag.price-very-high {
+    color: var(--success-very-high);
+    border-color: var(--success-very-high);
+    box-shadow: 0 0 20px rgba(248, 81, 73, 0.4);
+}
+
+.result-desc {
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+footer {
+    margin-top: 2.5rem;
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+footer p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 2rem 1.5rem;
+    }
+    h1 {
+        font-size: 2rem;
+    }
 }
